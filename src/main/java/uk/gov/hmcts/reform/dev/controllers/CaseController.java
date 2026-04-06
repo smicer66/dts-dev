@@ -3,25 +3,28 @@ package uk.gov.hmcts.reform.dev.controllers;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.dev.models.DTSTask;
 import uk.gov.hmcts.reform.dev.models.ExampleCase;
-import uk.gov.hmcts.reform.dev.repositories.IDTSTaskRepository;
 import uk.gov.hmcts.reform.dev.requests.CreateNewCaseRequest;
+import uk.gov.hmcts.reform.dev.requests.UpdateTaskRequest;
+import uk.gov.hmcts.reform.dev.responses.CreateNewTaskResponse;
+import uk.gov.hmcts.reform.dev.responses.TaskResponse;
+import uk.gov.hmcts.reform.dev.services.TaskService;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
+@Validated
+@RequestMapping("/api/v1/case-worker-tasks")
 public class CaseController {
 
-    @Autowired
-    private IDTSTaskRepository idtsTaskRepository;
 
+    @Autowired
+    private TaskService taskService;
 
     @GetMapping(value = "/get-example-case", produces = "application/json")
     public ResponseEntity<ExampleCase> getExampleCase() {
@@ -30,45 +33,40 @@ public class CaseController {
         ));
     }
 
-    @PostMapping(value = "/create-new-case", produces = "application/json")
-    public ResponseEntity<DTSTask> createNewCase(@Valid @RequestBody CreateNewCaseRequest createNewCaseRequest)
+    @PostMapping(value = "/create-new-task", produces = "application/json")
+    public ResponseEntity<CreateNewTaskResponse> createNewCase(@Valid @RequestBody CreateNewCaseRequest createNewCaseRequest)
     {
-        DTSTask dtsTask = new DTSTask();
-        dtsTask.setDescription(createNewCaseRequest.getTitle());
-        dtsTask.setStatus("Test");
-        dtsTask.setDueDateTime(createNewCaseRequest.getDueDateTime());
-        dtsTask.setTitle(createNewCaseRequest.getTitle());
-        idtsTaskRepository.save(dtsTask);
-        return ResponseEntity.ok().body(dtsTask);
+        CreateNewTaskResponse createNewTaskResponse = this.taskService.createNewTask(createNewCaseRequest);
+        return ResponseEntity.ok().body(createNewTaskResponse);
+
+
     }
 
-    @GetMapping(value = "/get-case-by-id/{id}", produces = "application/json")
-    public ResponseEntity<DTSTask> createNewCase(@PathVariable BigInteger id)
+    @GetMapping(value = "/get-task-by-id/{id}", produces = "application/json")
+    public ResponseEntity<TaskResponse> createNewCase(@Valid @PathVariable(required = true) Long id)
     {
-        Optional<DTSTask> dtsTaskOptional = (Optional<DTSTask>)idtsTaskRepository.findById(id);
-        return ResponseEntity.ok().body(dtsTaskOptional.get());
+        TaskResponse taskResponse = this.taskService.getTaskById(id);
+        return ResponseEntity.ok().body(taskResponse);
     }
 
-    @GetMapping(value = "/get-all-cases", produces = "application/json")
-    public ResponseEntity<Collection<DTSTask>> getAllCases()
+    @GetMapping(value = "/get-all-tasks", produces = "application/json")
+    public ResponseEntity<TaskResponse> getAllTasks()
     {
-        Collection<DTSTask> dtsTaskCollection = (Collection<DTSTask>) idtsTaskRepository.findAll();
-        return ResponseEntity.ok().body(dtsTaskCollection);
+        TaskResponse taskResponse = this.taskService.getAllTasks();
+        return ResponseEntity.ok().body(taskResponse);
     }
 
-    @GetMapping(value = "/update-case", produces = "application/json")
-    public ResponseEntity<DTSTask> updateCase(DTSTask dtsTask)
+    @PostMapping(value = "/update-task", produces = "application/json")
+    public ResponseEntity<TaskResponse> updateTask(@Valid @RequestBody UpdateTaskRequest updateTaskRequest)
     {
-        idtsTaskRepository.save(dtsTask);
-        return ResponseEntity.ok().body(dtsTask);
+        TaskResponse taskResponse = this.taskService.updateTask(updateTaskRequest);
+        return ResponseEntity.ok().body(taskResponse);
     }
 
     @GetMapping(value = "/delete-case/{id}", produces = "application/json")
-    public ResponseEntity<Integer> updateCase(@PathVariable BigInteger id)
+    public ResponseEntity<TaskResponse> deleteTask(@PathVariable(required = true) Long id)
     {
-        Optional<DTSTask> dtsTaskOptional = (Optional<DTSTask>)idtsTaskRepository.findById(id);
-        DTSTask dtsTask = dtsTaskOptional.get();
-        idtsTaskRepository.delete(dtsTask);
-        return ResponseEntity.ok().body(1);
+        TaskResponse taskResponse = this.taskService.deleteTask(id);
+        return ResponseEntity.ok().body(taskResponse);
     }
 }

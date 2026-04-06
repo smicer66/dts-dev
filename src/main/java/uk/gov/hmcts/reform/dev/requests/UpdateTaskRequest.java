@@ -1,9 +1,10 @@
 package uk.gov.hmcts.reform.dev.requests;
 
-
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import uk.gov.hmcts.reform.dev.annotations.ValidTaskStatusCode;
@@ -14,7 +15,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CreateNewCaseRequest {
+public class UpdateTaskRequest {
+
+    @NotNull(message = "Provide the identifier of the task being updated.")
+    private Long taskId;
 
     @NotBlank(message = "Provide the title of the case.")
     @Size(min = 3, max=255, message = "The title of the case must be of length between 3 and 255 characters.")

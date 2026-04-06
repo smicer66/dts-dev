@@ -8,14 +8,14 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
-@Constraint(validatedBy = StatusCodeValidator.class)
+@Constraint(validatedBy = TaskStatusCodeValidator.class)
 @Documented
-public @interface ValidStatusCode {
+public @interface ValidTaskStatusCode {
     Class<? extends Enum<?>> enumClass();
 
     Class<? extends Payload>[] payload() default {};
 
     Class<?>[] groups() default {};
 
-    String message() default "Status code does not match possible values expected.";
+    String message() default "Task status code does not match possible values expected.";
 }
