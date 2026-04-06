@@ -28,7 +28,7 @@ public class CreateNewCaseRequest {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dueDateTime;
 
-    @NotNull
+    @NotNull(message = "Specify the status of the task.")
     @ValidTaskStatusCode(enumClass = TaskStatus.class, message = "Provide a valid task status code matching the possible valid status codes.")
     private String taskStatus;
 }

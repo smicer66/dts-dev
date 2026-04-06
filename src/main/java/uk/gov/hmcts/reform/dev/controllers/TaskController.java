@@ -2,10 +2,10 @@ package uk.gov.hmcts.reform.dev.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.reform.dev.models.DTSTask;
 import uk.gov.hmcts.reform.dev.models.ExampleCase;
 import uk.gov.hmcts.reform.dev.requests.CreateNewCaseRequest;
 import uk.gov.hmcts.reform.dev.requests.UpdateTaskRequest;
@@ -20,7 +20,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @Validated
 @RequestMapping("/api/v1/case-worker-tasks")
-public class CaseController {
+public class TaskController {
 
 
     @Autowired
@@ -34,10 +34,10 @@ public class CaseController {
     }
 
     @PostMapping(value = "/create-new-task", produces = "application/json")
-    public ResponseEntity<CreateNewTaskResponse> createNewCase(@Valid @RequestBody CreateNewCaseRequest createNewCaseRequest)
+    public ResponseEntity<TaskResponse> createNewCase(@Valid @RequestBody CreateNewCaseRequest createNewCaseRequest)
     {
-        CreateNewTaskResponse createNewTaskResponse = this.taskService.createNewTask(createNewCaseRequest);
-        return ResponseEntity.ok().body(createNewTaskResponse);
+        TaskResponse taskResponse = this.taskService.createNewTask(createNewCaseRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskResponse);
 
 
     }
@@ -63,7 +63,7 @@ public class CaseController {
         return ResponseEntity.ok().body(taskResponse);
     }
 
-    @GetMapping(value = "/delete-case/{id}", produces = "application/json")
+    @GetMapping(value = "/delete-task/{id}", produces = "application/json")
     public ResponseEntity<TaskResponse> deleteTask(@PathVariable(required = true) Long id)
     {
         TaskResponse taskResponse = this.taskService.deleteTask(id);

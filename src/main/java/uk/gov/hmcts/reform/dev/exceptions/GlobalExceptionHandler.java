@@ -75,5 +75,20 @@ public class GlobalExceptionHandler {
             .body(taskResponse);
     }
 
+
+    @ExceptionHandler(TaskExistException.class)
+    public ResponseEntity<TaskResponse> handleTaskExist(Exception ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        TaskResponse taskResponse = new TaskResponse();
+        taskResponse.setApiStatusCode(1);
+        taskResponse.setApiMessage("A similar task already exists.");
+        taskResponse.setErrors(errors);
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(taskResponse);
+    }
+
 }
 
