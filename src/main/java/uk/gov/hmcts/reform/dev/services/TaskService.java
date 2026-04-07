@@ -30,4 +30,7 @@ public interface TaskService {
 
     //Operation to delete a task
     void deleteTask(Long id);
+
+    //Operation to delete a task
+    void truncateTable();
 }

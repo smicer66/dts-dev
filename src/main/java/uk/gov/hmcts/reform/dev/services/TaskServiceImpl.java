@@ -32,6 +32,13 @@ public class TaskServiceImpl implements TaskService{
         this.idtsTaskRepository = idtsTaskRepository;
     }
 
+
+    @Transactional
+    public void truncateTable()
+    {
+        idtsTaskRepository.truncateTable();
+    }
+
     @Override
     @Transactional
     /*

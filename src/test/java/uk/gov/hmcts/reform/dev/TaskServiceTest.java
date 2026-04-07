@@ -23,6 +23,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;*/
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -53,20 +54,39 @@ public class TaskServiceTest {
 
     private String randomTitleCode = RandomStringUtils.randomAlphanumeric(8);
 
+
+    @BeforeEach
+    void setup() {
+        // Clear DB and preload test data
+        taskService.truncateTable();
+
+        idtsTaskRepository.save(new DTSTask("Title 01", "Title 01 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 02", "Title 02 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 03", "Title 03 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 04", "Title 04 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 05", "Title 05 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 06", "Title 06 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 07", "Title 07 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 08", "Title 08 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 09", "Title 09 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 10", "Title 10 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+    }
+
+
     @Test
     public void createNewTaskValidRequestReturnsValidTask(){
 
         //Request for creating a new task
         CreateNewTaskRequest request = new CreateNewTaskRequest();
         request.setTaskStatus(TaskStatus.ACTIVE_TRIAL.getCode());
-        request.setTitle("Test Case - " + randomTitleCode);
-        request.setDescription("Test Case Description - " + randomTitleCode);
+        request.setTitle("Test " + randomTitleCode);
+        request.setDescription("Test Description - " + randomTitleCode);
         request.setDueDateTime(LocalDateTime.now().plusDays(30));
 
 
         DTSTask dtsTask = taskService.createNewTask(request);
         //Check to confirm the title of the new task created matches the title in the request
-        assertEquals(dtsTask.getTitle(), "Test Case - " + randomTitleCode);
+        assertEquals(dtsTask.getTitle(), "Test " + randomTitleCode);
 
         //Check that an id was auto-generated
         assertInstanceOf(Long.class, dtsTask.getId());
@@ -85,7 +105,7 @@ public class TaskServiceTest {
         assertNotNull(dtsTask);
 
         //Check to confirm that the title equals the initial set value for the task
-        assertEquals(dtsTask.getTitle(), "Test Case 01");
+        assertEquals(dtsTask.getTitle(), "Title 03");
 
         //Check to confirm that the id matches the id used to fetch the task
         assertEquals(dtsTask.getId(), 3L);
@@ -140,7 +160,6 @@ public class TaskServiceTest {
     public void updateTaskSuccessTest(){
 
         //Get the task matching the ID number 3
-        System.out.println(randomTitleCode);
         DTSTask existingTask = taskService.getTaskById(3L);
         TaskStatus currentTaskStatus = existingTask.getTaskStatus();
 
@@ -148,7 +167,7 @@ public class TaskServiceTest {
         assertNotNull(existingTask);
 
         //Check that the status of the task fetched equals to 'ACTIVE_TRIAL'
-        assertEquals(currentTaskStatus, TaskStatus.ACTIVE_TRIAL);
+        assertEquals(currentTaskStatus, TaskStatus.CLOSED);
 
         //Update the task updating the status to 'ADJOURNED'
         UpdateTaskRequest request = new UpdateTaskRequest();
@@ -171,6 +190,10 @@ public class TaskServiceTest {
         //Reset status back to previous status for subsequent running of tests
         request = new UpdateTaskRequest();
         request.setTaskStatus(currentTaskStatus.getCode());
+        request.setTitle(existingTask.getTitle());
+        request.setDescription(existingTask.getDescription());
+        request.setDueDateTime(existingTask.getDueDateTime());
+        request.setTaskId(existingTask.getId());
         taskService.updateTask(request);
     }
 

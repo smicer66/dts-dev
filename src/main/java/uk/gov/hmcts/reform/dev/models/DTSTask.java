@@ -29,6 +29,23 @@ public class DTSTask {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public DTSTask( )
+    {
+
+    }
+
+    public DTSTask(
+        String title,
+        String description,
+        TaskStatus taskStatus,
+        LocalDateTime dueDateTime
+    )
+    {
+        this.title = title;
+        this.description = description;
+        this.taskStatus = taskStatus;
+        this.dueDateTime = dueDateTime;
+    }
 
     @Column(name="title", nullable = false)
     private String title;

@@ -4,10 +4,7 @@ package uk.gov.hmcts.reform.dev.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +15,7 @@ import uk.gov.hmcts.reform.dev.models.DTSTask;
 import uk.gov.hmcts.reform.dev.repositories.IDTSTaskRepository;
 import uk.gov.hmcts.reform.dev.requests.CreateNewTaskRequest;
 import uk.gov.hmcts.reform.dev.requests.UpdateTaskRequest;
+import uk.gov.hmcts.reform.dev.services.TaskServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -37,8 +35,28 @@ public class TaskControllerIntegrationTest
     @Autowired
     private IDTSTaskRepository idtsTaskRepository;
 
+    @Autowired
+    private TaskServiceImpl taskServiceImpl;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+
+    @BeforeEach
+    void setup() {
+        // Clear DB and preload test data
+        taskServiceImpl.truncateTable();
+
+        idtsTaskRepository.save(new DTSTask("Title 01", "Title 01 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 02", "Title 02 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 03", "Title 03 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 04", "Title 04 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 05", "Title 05 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 06", "Title 06 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 07", "Title 07 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 08", "Title 08 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 09", "Title 09 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+        idtsTaskRepository.save(new DTSTask("Title 10", "Title 10 Description", TaskStatus.CLOSED, LocalDateTime.now()));
+    }
 
     @Test
     @Order(1)
@@ -49,8 +67,8 @@ public class TaskControllerIntegrationTest
 
         CreateNewTaskRequest request = new CreateNewTaskRequest();
         request.setTaskStatus(TaskStatus.ACTIVE_TRIAL.getCode());
-        request.setTitle("Test Case - " + randomTitleCode);
-        request.setDescription("Test Case Description - " + randomTitleCode);
+        request.setTitle("Title - " + randomTitleCode);
+        request.setDescription("Title Description - " + randomTitleCode);
         request.setDueDateTime(LocalDateTime.now().plusDays(30));
 
         //Send a post request to create a new task
@@ -121,8 +139,8 @@ public class TaskControllerIntegrationTest
         UpdateTaskRequest request = new UpdateTaskRequest();
         request.setTaskStatus(TaskStatus.ACTIVE_TRIAL.getCode());
         request.setTaskId(2L);
-        request.setTitle("Test Case - " + randomTitleCode);
-        request.setDescription("Test Case Description - " + randomTitleCode);
+        request.setTitle("Title " + randomTitleCode);
+        request.setDescription("Title Description - " + randomTitleCode);
         request.setDueDateTime(LocalDateTime.now().plusDays(30));
 
         //Send post request updating the task

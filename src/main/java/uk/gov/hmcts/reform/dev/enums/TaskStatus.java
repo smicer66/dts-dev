@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
 
+
+//These status have been fetched from online in relation to court cases
 public enum TaskStatus {
     FILED("FILED", "Filed"),
     PENDING("PENDING", "Pending"),
