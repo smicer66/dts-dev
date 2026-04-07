@@ -12,9 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+/*
+Handles all exceptions in the system to present a custom response.
+For the different exceptions, an appropriate HTTP status code is returned as response.
+ */
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<TaskResponse> handleValidationErrors(
+    public ResponseEntity<TaskResponse> handleValidationError(
         MethodArgumentNotValidException ex) {
 
         Map<String, String> errors = new HashMap<>();
@@ -31,7 +35,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<TaskResponse> handleBusinessError(
+    public ResponseEntity<TaskResponse> handleIllegalArgumentException(
         IllegalArgumentException ex) {
 
         Map<String, String> errors = new HashMap<>();
@@ -46,7 +50,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<TaskResponse> handleGenericError(Exception ex) {
+    public ResponseEntity<TaskResponse> handleGenericExceptionError(Exception ex) {
 
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
@@ -62,6 +66,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(java.time.format.DateTimeParseException.class)
+    //This is for handling the parsing of datetime exception
     public ResponseEntity<TaskResponse> handleMessageNotReadableError(Exception ex) {
 
         Map<String, String> errors = new HashMap<>();
@@ -77,6 +82,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(TaskExistException.class)
+    //This is for exceptions thrown where there is a duplicate about to be created but we dont want the duplicate created.
     public ResponseEntity<TaskResponse> handleTaskExist(Exception ex) {
 
         Map<String, String> errors = new HashMap<>();
@@ -92,6 +98,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(TaskNotExistException.class)
+    //This is an exception thrown then an id of a task not existing is passed to an operation.
     public ResponseEntity<TaskResponse> handleTaskNotExist(Exception ex) {
 
         Map<String, String> errors = new HashMap<>();

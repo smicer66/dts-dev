@@ -9,6 +9,11 @@ import uk.gov.hmcts.reform.dev.models.DTSTask;
 import java.math.BigInteger;
 
 @Repository
+/*
+JPA Repository that performs the queries used in the service layer.
+This repository also performs the updates, insertion and deletion of instances of the DTSTask.
+Queries have been written using JPQL similar to HQL
+ */
 public interface IDTSTaskRepository extends JpaRepository<DTSTask, Long>{
 
     @Query("SELECT dts FROM DTSTask dts WHERE dts.deletedAt IS NULL AND dts.title = :title")
