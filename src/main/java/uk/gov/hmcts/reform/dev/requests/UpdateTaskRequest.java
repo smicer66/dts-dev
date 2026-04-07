@@ -17,22 +17,22 @@ import java.time.LocalDateTime;
 @Setter
 public class UpdateTaskRequest {
 
-    @NotNull(message = "Provide the identifier of the task being updated.")
+    @NotNull(message="Provide the identifier of the task being updated.")
     private Long taskId;
 
-    @NotBlank(message = "Provide the title of the case.")
-    @Size(min = 3, max=255, message = "The title of the case must be of length between 3 and 255 characters.")
+    @NotBlank(message="Provide the title of the case.")
+    @Size(min=3, max=255, message="The title of the case must be of length between 3 and 255 characters.")
     private String title;
 
-    @Size(max=500, message = "The description of the case must not exceed 500 characters in length.")
+    @Size(max=500, message="The description of the case must not exceed 500 characters in length.")
     private String description;
 
-    @NotNull(message = "Provide the due data of the case.")
-    @FutureOrPresent(message = "The due date must be in the future or the current date.")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @NotNull(message="Provide the due data of the case.")
+    @FutureOrPresent(message="The due date must be in the future or the current date.")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dueDateTime;
 
     @NotNull
-    @ValidTaskStatusCode(enumClass = TaskStatus.class, message = "Provide a valid task status code matching the possible valid status codes.")
+    @ValidTaskStatusCode(enumClass=TaskStatus.class, message="Provide a valid task status code matching the possible valid status codes.")
     private String taskStatus;
 }

@@ -90,5 +90,20 @@ public class GlobalExceptionHandler {
             .body(taskResponse);
     }
 
+
+    @ExceptionHandler(TaskNotExistException.class)
+    public ResponseEntity<TaskResponse> handleTaskNotExist(Exception ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        TaskResponse taskResponse = new TaskResponse();
+        taskResponse.setApiStatusCode(1);
+        taskResponse.setApiMessage("No task matching the identifier currently exist.");
+        taskResponse.setErrors(errors);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(taskResponse);
+    }
+
 }
 

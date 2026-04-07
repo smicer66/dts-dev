@@ -6,14 +6,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.hmcts.reform.dev.models.DTSTask;
 import uk.gov.hmcts.reform.dev.models.ExampleCase;
 import uk.gov.hmcts.reform.dev.requests.CreateNewCaseRequest;
 import uk.gov.hmcts.reform.dev.requests.UpdateTaskRequest;
 import uk.gov.hmcts.reform.dev.responses.CreateNewTaskResponse;
 import uk.gov.hmcts.reform.dev.responses.TaskResponse;
-import uk.gov.hmcts.reform.dev.services.TaskService;
+//import uk.gov.hmcts.reform.dev.services.TaskService;
+import uk.gov.hmcts.reform.dev.services.TaskServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -24,7 +27,7 @@ public class TaskController {
 
 
     @Autowired
-    private TaskService taskService;
+    private TaskServiceImpl taskService;
 
     @GetMapping(value = "/get-example-case", produces = "application/json")
     public ResponseEntity<ExampleCase> getExampleCase() {
@@ -36,7 +39,13 @@ public class TaskController {
     @PostMapping(value = "/create-new-task", produces = "application/json")
     public ResponseEntity<TaskResponse> createNewCase(@Valid @RequestBody CreateNewCaseRequest createNewCaseRequest)
     {
-        TaskResponse taskResponse = this.taskService.createNewTask(createNewCaseRequest);
+        DTSTask dtsTask = this.taskService.createNewTask(createNewCaseRequest);
+
+        TaskResponse taskResponse = new TaskResponse();
+        taskResponse.setData(dtsTask);
+        taskResponse.setApiStatusCode(0);
+        taskResponse.setApiMessage("New task created successfully.");
+
         return ResponseEntity.status(HttpStatus.CREATED).body(taskResponse);
 
 
@@ -45,28 +54,50 @@ public class TaskController {
     @GetMapping(value = "/get-task-by-id/{id}", produces = "application/json")
     public ResponseEntity<TaskResponse> createNewCase(@Valid @PathVariable(required = true) Long id)
     {
-        TaskResponse taskResponse = this.taskService.getTaskById(id);
+        DTSTask dtsTask = this.taskService.getTaskById(id);
+
+        TaskResponse taskResponse = new TaskResponse();
+        taskResponse.setApiStatusCode(0);
+        taskResponse.setApiMessage("Task found.");
+        taskResponse.setData(dtsTask);
         return ResponseEntity.ok().body(taskResponse);
     }
 
     @GetMapping(value = "/get-all-tasks", produces = "application/json")
     public ResponseEntity<TaskResponse> getAllTasks()
     {
-        TaskResponse taskResponse = this.taskService.getAllTasks();
+        Collection<DTSTask> dtsTaskCollection = this.taskService.getAllTasks();
+
+        TaskResponse taskResponse = new TaskResponse();
+        taskResponse.setApiStatusCode(0);
+        taskResponse.setApiMessage("Tasks found.");
+        taskResponse.setData(dtsTaskCollection);
         return ResponseEntity.ok().body(taskResponse);
     }
 
     @PostMapping(value = "/update-task", produces = "application/json")
-    public ResponseEntity<TaskResponse> updateTask(@Valid @RequestBody UpdateTaskRequest updateTaskRequest)
+    ResponseEntity<TaskResponse> updateTask(@Valid @RequestBody UpdateTaskRequest updateTaskRequest)
     {
-        TaskResponse taskResponse = this.taskService.updateTask(updateTaskRequest);
+        DTSTask dtsTask = this.taskService.updateTask(updateTaskRequest);
+
+        TaskResponse taskResponse = new TaskResponse();
+        taskResponse.setData(dtsTask);
+        taskResponse.setApiStatusCode(0);
+        taskResponse.setApiMessage("Task updated successfully.");
         return ResponseEntity.ok().body(taskResponse);
     }
 
     @GetMapping(value = "/delete-task/{id}", produces = "application/json")
     public ResponseEntity<TaskResponse> deleteTask(@PathVariable(required = true) Long id)
     {
-        TaskResponse taskResponse = this.taskService.deleteTask(id);
+        this.taskService.deleteTask(id);
+
+
+        TaskResponse taskResponse = new TaskResponse();
+        taskResponse.setData(null);
+        taskResponse.setApiStatusCode(0);
+        taskResponse.setApiMessage("Task deleted successfully.");
+
         return ResponseEntity.ok().body(taskResponse);
     }
 }
