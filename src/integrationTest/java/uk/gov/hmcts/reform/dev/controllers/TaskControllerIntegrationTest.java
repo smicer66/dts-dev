@@ -3,9 +3,7 @@ package uk.gov.hmcts.reform.dev.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.persistence.OrderBy;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.reform.dev.enums.TaskStatus;
 import uk.gov.hmcts.reform.dev.models.DTSTask;
 import uk.gov.hmcts.reform.dev.repositories.IDTSTaskRepository;
-import uk.gov.hmcts.reform.dev.requests.CreateNewCaseRequest;
+import uk.gov.hmcts.reform.dev.requests.CreateNewTaskRequest;
 import uk.gov.hmcts.reform.dev.requests.UpdateTaskRequest;
 
 import java.time.LocalDateTime;
@@ -49,7 +47,7 @@ public class TaskControllerIntegrationTest
         //Create a random code to enable the titles of the tasks be unique
         String randomTitleCode = RandomStringUtils.randomAlphanumeric(6);
 
-        CreateNewCaseRequest request = new CreateNewCaseRequest();
+        CreateNewTaskRequest request = new CreateNewTaskRequest();
         request.setTaskStatus(TaskStatus.ACTIVE_TRIAL.getCode());
         request.setTitle("Test Case - " + randomTitleCode);
         request.setDescription("Test Case Description - " + randomTitleCode);
@@ -90,7 +88,7 @@ public class TaskControllerIntegrationTest
         String randomTitleCode = RandomStringUtils.randomAlphanumeric(6);
 
         //New request body that does not contain any of the fields. This request body is empty.
-        CreateNewCaseRequest request = new CreateNewCaseRequest();
+        CreateNewTaskRequest request = new CreateNewTaskRequest();
 
         //Send post request to create a new task posting the empty request body.
         //-Check to confirm that the HTTP response code is 400 (Bad request).
@@ -228,6 +226,11 @@ public class TaskControllerIntegrationTest
     @Order(7)
     void whenValidGetAllTasks_thenReturns200() throws Exception {
         objectMapper.registerModule(new JavaTimeModule());
+
+        //Fetch all tasks
+        //- Check that the response field apiStatusCode equals 0 which indicates that tasks were fetched
+        //- Check that no errors are returned in the response
+        //-Check that the tasks returned exists in the data field of the response
         mockMvc.perform(get("/api/v1/case-worker-tasks/get-all-tasks")
                             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -242,6 +245,10 @@ public class TaskControllerIntegrationTest
     @Order(8)
     void whenDeleteNonExistingTask_thenReturns404() throws Exception {
         objectMapper.registerModule(new JavaTimeModule());
+        //Delete the task whose ID equals 40000
+        //- Check that the response field apiStatusCode equals 1 which indicates that no task matching the ID exists
+        //- Check that the response field errors are not empty in the response
+        //-Check that the error message indicates that there are no tasks matching the ID 40000
         mockMvc.perform(get("/api/v1/case-worker-tasks/delete-task/40000")
                             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
@@ -257,13 +264,21 @@ public class TaskControllerIntegrationTest
     @Order(9)
     void whenValidDeleteTask_thenReturns200() throws Exception {
         objectMapper.registerModule(new JavaTimeModule());
-        mockMvc.perform(get("/api/v1/case-worker-tasks/delete-task/7")
+        //Delete the last task as we consider the task safe to delete.
+        //-Check that the HTTP status returned is 200 indicating it was successful.
+        //-Check that the apiMessage field in the response contains a message indicate the task has been deleted successfully.
+        //-Check that the apiStatusCode field in the response equals 0 indicating that the operation was successful.
+
+        DTSTask lastTask = idtsTaskRepository.findAll().stream().reduce((first, second) -> second).get();
+        mockMvc.perform(get("/api/v1/case-worker-tasks/delete-task/" + lastTask.getId())
                             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.apiStatusCode").value(0))
             .andExpect(jsonPath("$.errors").isEmpty())
             .andExpect(jsonPath("$.data").isEmpty())
             .andExpect(jsonPath("$.apiMessage").value("Task deleted successfully."));
+
+
 
     }
 

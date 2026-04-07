@@ -14,7 +14,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CreateNewCaseRequest {
+/*
+This class models the request used to create a task.
+Instances of this class will be validated at the controller to ensure the data provided meets the specification provided such as fields required.
+ */
+public class CreateNewTaskRequest {
 
     @NotBlank(message="Provide the title of the case.")
     @Size(min=3, max=255, message="The title of the case must be of length between 3 and 255 characters.")

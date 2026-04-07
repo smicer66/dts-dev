@@ -8,9 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.dev.models.DTSTask;
 import uk.gov.hmcts.reform.dev.models.ExampleCase;
-import uk.gov.hmcts.reform.dev.requests.CreateNewCaseRequest;
+import uk.gov.hmcts.reform.dev.requests.CreateNewTaskRequest;
 import uk.gov.hmcts.reform.dev.requests.UpdateTaskRequest;
-import uk.gov.hmcts.reform.dev.responses.CreateNewTaskResponse;
 import uk.gov.hmcts.reform.dev.responses.TaskResponse;
 //import uk.gov.hmcts.reform.dev.services.TaskService;
 import uk.gov.hmcts.reform.dev.services.TaskServiceImpl;
@@ -37,7 +36,13 @@ public class TaskController {
     }
 
     @PostMapping(value = "/create-new-task", produces = "application/json")
-    public ResponseEntity<TaskResponse> createNewCase(@Valid @RequestBody CreateNewCaseRequest createNewCaseRequest)
+    /*
+    End point that creates the tasks.
+    Method that handles this operation validates the request before processing it.
+    Sends response indicating success or failure of the operation.
+    If failed, an exception is thrown which is gandled by the Generic exception handler.
+     */
+    public ResponseEntity<TaskResponse> createNewCase(@Valid @RequestBody CreateNewTaskRequest createNewCaseRequest)
     {
         DTSTask dtsTask = this.taskService.createNewTask(createNewCaseRequest);
 
@@ -52,6 +57,13 @@ public class TaskController {
     }
 
     @GetMapping(value = "/get-task-by-id/{id}", produces = "application/json")
+    /*
+    End point that fetches tasks by iD.
+    Method that handles this operation requires an ID to be provided in the url.
+    Sends response indicating success or failure of the operation.
+    If failed, an exception is thrown which is gandled by the Generic exception handler.
+    The task details fetched are in the data field of the response.
+     */
     public ResponseEntity<TaskResponse> createNewCase(@Valid @PathVariable(required = true) Long id)
     {
         DTSTask dtsTask = this.taskService.getTaskById(id);
@@ -64,6 +76,13 @@ public class TaskController {
     }
 
     @GetMapping(value = "/get-all-tasks", produces = "application/json")
+    /*
+    End point that fetches all tasks.
+    Method that handles this operation fetches all the tasks in the table irrespective of if the deletedAt field is not null.
+    Sends response indicating success or failure of the operation.
+    If failed, an exception is thrown which is gandled by the Generic exception handler.
+    The task details fetched are in the data field of the response.
+     */
     public ResponseEntity<TaskResponse> getAllTasks()
     {
         Collection<DTSTask> dtsTaskCollection = this.taskService.getAllTasks();
@@ -76,6 +95,13 @@ public class TaskController {
     }
 
     @PostMapping(value = "/update-task", produces = "application/json")
+    /*
+    End point that updates a task.
+    Method that handles this operation validates the request which requires an ID of the task to be updated.
+    Sends response indicating success or failure of the operation.
+    If failed, an exception is thrown which is handled by the generic exception handler.
+    The task details updated are in the data field of the response.
+     */
     ResponseEntity<TaskResponse> updateTask(@Valid @RequestBody UpdateTaskRequest updateTaskRequest)
     {
         DTSTask dtsTask = this.taskService.updateTask(updateTaskRequest);
@@ -88,6 +114,12 @@ public class TaskController {
     }
 
     @GetMapping(value = "/delete-task/{id}", produces = "application/json")
+    /*
+    End point that deletes tasks by iD.
+    Method that handles this operation requires an ID to be provided in the url.
+    Sends response indicating success or failure of the operation.
+    If failed, an exception is thrown which is handled by the generic exception handler.
+     */
     public ResponseEntity<TaskResponse> deleteTask(@PathVariable(required = true) Long id)
     {
         this.taskService.deleteTask(id);

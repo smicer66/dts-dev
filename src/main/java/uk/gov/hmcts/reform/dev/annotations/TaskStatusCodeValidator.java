@@ -2,9 +2,6 @@ package uk.gov.hmcts.reform.dev.annotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import uk.gov.hmcts.reform.dev.enums.TaskStatus;
-
-import java.lang.reflect.Method;
 
 public class TaskStatusCodeValidator implements ConstraintValidator<ValidTaskStatusCode, String> {
 
@@ -16,6 +13,7 @@ public class TaskStatusCodeValidator implements ConstraintValidator<ValidTaskSta
     }
 
     @Override
+    //Check to see if the value being validated equals any of the enum values of TaskStatus
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if(value==null)
         {
@@ -26,16 +24,7 @@ public class TaskStatusCodeValidator implements ConstraintValidator<ValidTaskSta
         {
             try
             {
-//                System.out.println("E Constants..." + e.name());
-//                Class C = TaskStatus.class;//enumClass.getClass()
-//                System.out.println("C..." + C.getClass().getName());
-//                Method m = TaskStatus.class.getMethod("getCode");
-//
-//                System.out.println("m..." + m.getName());
-//                m.invoke(e);
-//                String statusCode = (String)enumClass.getClass().getMethod("getCode").invoke(e);
-//
-//                System.out.println("statusCode..." + statusCode);
+
                 if(e.name().equals(value)){
                     return true;
                 }

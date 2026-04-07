@@ -17,10 +17,18 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Table(name = "DTSTrack")
+/*
+This class models the Task entity.
+Decided to call it DTS task to differentiate it from Scheduling Task class provided by SpringBoot.
+Added createdAt, updatedAt, and deletedAt fields to capture the timestamps of creation, update and deletion of instances of the class.
+However, the deletedAt field is not being used at the moment. It would be great to use it for soft-delete but the specs of
+the system does not indicate we are doing a soft delete.
+ */
 public class DTSTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     @Column(name="title", nullable = false)
     private String title;
@@ -56,6 +64,7 @@ public class DTSTask {
     @PrePersist
     public void onCreate()
     {
+        //Update these two fields any time we are creating an instance.
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

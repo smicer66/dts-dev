@@ -15,6 +15,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+/*
+This class models the update request used to update a task.
+The taskId field indicates the id of the task to be updated.
+ */
 public class UpdateTaskRequest {
 
     @NotNull(message="Provide the identifier of the task being updated.")

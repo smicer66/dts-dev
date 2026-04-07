@@ -24,25 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;*/
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.reform.dev.enums.TaskStatus;
 import uk.gov.hmcts.reform.dev.exceptions.TaskExistException;
 import uk.gov.hmcts.reform.dev.exceptions.TaskNotExistException;
 import uk.gov.hmcts.reform.dev.models.DTSTask;
 import uk.gov.hmcts.reform.dev.repositories.IDTSTaskRepository;
-import uk.gov.hmcts.reform.dev.requests.CreateNewCaseRequest;
+import uk.gov.hmcts.reform.dev.requests.CreateNewTaskRequest;
 import uk.gov.hmcts.reform.dev.requests.UpdateTaskRequest;
-import uk.gov.hmcts.reform.dev.responses.TaskResponse;
 import uk.gov.hmcts.reform.dev.services.TaskServiceImpl;
 
 import java.time.LocalDateTime;
@@ -66,7 +57,7 @@ public class TaskServiceTest {
     public void createNewTaskValidRequestReturnsValidTask(){
 
         //Request for creating a new task
-        CreateNewCaseRequest request = new CreateNewCaseRequest();
+        CreateNewTaskRequest request = new CreateNewTaskRequest();
         request.setTaskStatus(TaskStatus.ACTIVE_TRIAL.getCode());
         request.setTitle("Test Case - " + randomTitleCode);
         request.setDescription("Test Case Description - " + randomTitleCode);
