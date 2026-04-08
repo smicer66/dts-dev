@@ -11,7 +11,6 @@ import java.util.Arrays;
 public enum TaskStatus {
     FILED("FILED", "Filed"),
     PENDING("PENDING", "Pending"),
-    UNDER_INVESTIGATION("UNDER_INVESTIGATION", "Under Investigation"),
     PRE_TRIAL("PRE_TRIAL", "Pre-Trial"),
     ACTIVE_TRIAL("ACTIVE_TRIAL","Under Investigation"),
     ADJOURNED("ADJOURNED","Adjourned"),
